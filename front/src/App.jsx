@@ -13,14 +13,14 @@ function App() {
     .then(data=>setData(data))
     .catch(err=>setError(err.message))
   }, []);
-  
+
   return (
     <>
       <h1>Hello React</h1>
       {/* conditional rendering */}
       {/* short circuit and */}
       {error && <p>{error}</p>}
-      {data && <p>{data}</p>}
+      {data && <p>{data.message}</p>}
     </>
   )
 }
