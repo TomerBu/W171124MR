@@ -8,7 +8,7 @@ function App() {
 
   useEffect(() => {
     // demo talking to the server:
-    fetch('http://localhost:3000/api')
+    fetch('/api')
     .then(res=>res.json())
     .then(data=>setData(data))
     .catch(err=>setError(err.message))
