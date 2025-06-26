@@ -25,6 +25,14 @@
         "documentation": {}
     },
     {
+        "label": "RegexValidator",
+        "importPath": "django.core.validators",
+        "description": "django.core.validators",
+        "isExtraImport": true,
+        "detail": "django.core.validators",
+        "documentation": {}
+    },
+    {
         "label": "django.db.models.deletion",
         "kind": 6,
         "isExtraImport": true,
@@ -114,6 +122,22 @@
         "documentation": {}
     },
     {
+        "label": "permissions",
+        "importPath": "rest_framework",
+        "description": "rest_framework",
+        "isExtraImport": true,
+        "detail": "rest_framework",
+        "documentation": {}
+    },
+    {
+        "label": "serializers",
+        "importPath": "rest_framework",
+        "description": "rest_framework",
+        "isExtraImport": true,
+        "detail": "rest_framework",
+        "documentation": {}
+    },
+    {
         "label": "ModelSerializer",
         "importPath": "rest_framework.serializers",
         "description": "rest_framework.serializers",
@@ -183,6 +207,22 @@
         "description": "rest_framework.viewsets",
         "isExtraImport": true,
         "detail": "rest_framework.viewsets",
+        "documentation": {}
+    },
+    {
+        "label": "CommentOwnerOrReadOnly",
+        "importPath": "api.permissions",
+        "description": "api.permissions",
+        "isExtraImport": true,
+        "detail": "api.permissions",
+        "documentation": {}
+    },
+    {
+        "label": "IsAuthenticatedOrReadOnly",
+        "importPath": "rest_framework.permissions",
+        "description": "rest_framework.permissions",
+        "isExtraImport": true,
+        "detail": "rest_framework.permissions",
         "documentation": {}
     },
     {
@@ -325,11 +365,65 @@
         "documentation": {}
     },
     {
+        "label": "IsAdmin",
+        "kind": 6,
+        "importPath": "api.permissions",
+        "description": "api.permissions",
+        "peekOfCode": "class IsAdmin(permissions.BasePermission):\n    \"\"\"\n     Allow only admin users to access the view.\n    \"\"\"\n    def has_permissions(self, request, view):\n        return request.user and request.user.is_staff and request.user.is_superuser\nclass CommentOwnerOrReadOnly(permissions.BasePermission):\n    def has_object_permission(self, request, view, obj):\n        if request.method in permissions.SAFE_METHODS:\n            return True",
+        "detail": "api.permissions",
+        "documentation": {}
+    },
+    {
+        "label": "CommentOwnerOrReadOnly",
+        "kind": 6,
+        "importPath": "api.permissions",
+        "description": "api.permissions",
+        "peekOfCode": "class CommentOwnerOrReadOnly(permissions.BasePermission):\n    def has_object_permission(self, request, view, obj):\n        if request.method in permissions.SAFE_METHODS:\n            return True\n        if hasattr(obj, 'author') and hasattr(obj.author, 'user'):\n            return obj.author.user == request.user\n        return False\nclass PostsPermission(permissions.BasePermission):\n    def has_permission(self, request, view):\n        if request.method in permissions.SAFE_METHODS:",
+        "detail": "api.permissions",
+        "documentation": {}
+    },
+    {
+        "label": "PostsPermission",
+        "kind": 6,
+        "importPath": "api.permissions",
+        "description": "api.permissions",
+        "peekOfCode": "class PostsPermission(permissions.BasePermission):\n    def has_permission(self, request, view):\n        if request.method in permissions.SAFE_METHODS:\n            return True\n        return request.user.is_superuser or request.user.is_staff\nclass TagsPermission(PostsPermission):\n    \"\"\"\n    Allow admins to write Tags, all users can read\n    \"\"\"\nclass UserProfilePermission(permissions.BasePermission):",
+        "detail": "api.permissions",
+        "documentation": {}
+    },
+    {
+        "label": "TagsPermission",
+        "kind": 6,
+        "importPath": "api.permissions",
+        "description": "api.permissions",
+        "peekOfCode": "class TagsPermission(PostsPermission):\n    \"\"\"\n    Allow admins to write Tags, all users can read\n    \"\"\"\nclass UserProfilePermission(permissions.BasePermission):\n    \"\"\"\n      allow the user and admin to edit, rest can view\n    \"\"\"\n    def has_object_permission(self, request, view, obj):\n        return obj.user == request.user or request.user.is_superuser",
+        "detail": "api.permissions",
+        "documentation": {}
+    },
+    {
+        "label": "UserProfilePermission",
+        "kind": 6,
+        "importPath": "api.permissions",
+        "description": "api.permissions",
+        "peekOfCode": "class UserProfilePermission(permissions.BasePermission):\n    \"\"\"\n      allow the user and admin to edit, rest can view\n    \"\"\"\n    def has_object_permission(self, request, view, obj):\n        return obj.user == request.user or request.user.is_superuser\nclass UserLikesPermission(permissions.BasePermission):\n    \"\"\"\n      allow the user and admin to edit, rest can view\n    \"\"\"",
+        "detail": "api.permissions",
+        "documentation": {}
+    },
+    {
+        "label": "UserLikesPermission",
+        "kind": 6,
+        "importPath": "api.permissions",
+        "description": "api.permissions",
+        "peekOfCode": "class UserLikesPermission(permissions.BasePermission):\n    \"\"\"\n      allow the user and admin to edit, rest can view\n    \"\"\"\n    def has_object_permission(self, request, view, obj):\n        return obj.user.user == request.user or request.user.is_superuser",
+        "detail": "api.permissions",
+        "documentation": {}
+    },
+    {
         "label": "UserSerializer",
         "kind": 6,
         "importPath": "api.serialiazers",
         "description": "api.serialiazers",
-        "peekOfCode": "class UserSerializer(ModelSerializer):\n    class Meta:\n        model = User\n        fields = \"__all__\"\nclass CommentSerializer(ModelSerializer):\n    class Meta:\n        model = Comment\n        fields = \"__all__\"\nclass UserProfileSerializer(ModelSerializer):\n    class Meta:",
+        "peekOfCode": "class UserSerializer(ModelSerializer):\n    password = serializers.CharField(\n        write_only=True,\n        validators=[\n                    RegexValidator(regex=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$',\n                                    message=\"Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, and one number.\"\n                       )\n                    ]\n    )\n    class Meta:",
         "detail": "api.serialiazers",
         "documentation": {}
     },
@@ -401,7 +495,7 @@
         "kind": 6,
         "importPath": "api.views",
         "description": "api.views",
-        "peekOfCode": "class UserViewSet(ModelViewSet):\n    queryset = User.objects.all()\n    serializer_class = UserSerializer\nclass TagViewSet(ModelViewSet):\n    queryset = Tag.objects.all()\n    serializer_class = TagSerializer\nclass PostUserLikesViewSet(ModelViewSet):\n    queryset = PostUserLikes.objects.all()\n    serializer_class = PostUserLikesSerializer\nclass PostViewSet(ModelViewSet):",
+        "peekOfCode": "class UserViewSet(ModelViewSet):\n    queryset = User.objects.all()\n    serializer_class = UserSerializer\nfrom rest_framework.permissions import IsAuthenticatedOrReadOnly\nclass TagViewSet(ModelViewSet):\n    queryset = Tag.objects.all()\n    serializer_class = TagSerializer\n    permission_classes = [CommentOwnerOrReadOnly]\nclass PostUserLikesViewSet(ModelViewSet):\n    queryset = PostUserLikes.objects.all()",
         "detail": "api.views",
         "documentation": {}
     },
@@ -410,7 +504,7 @@
         "kind": 6,
         "importPath": "api.views",
         "description": "api.views",
-        "peekOfCode": "class TagViewSet(ModelViewSet):\n    queryset = Tag.objects.all()\n    serializer_class = TagSerializer\nclass PostUserLikesViewSet(ModelViewSet):\n    queryset = PostUserLikes.objects.all()\n    serializer_class = PostUserLikesSerializer\nclass PostViewSet(ModelViewSet):\n    queryset = Post.objects.all()\n    serializer_class = PostSerializer\nclass UserProfileViewSet(ModelViewSet):",
+        "peekOfCode": "class TagViewSet(ModelViewSet):\n    queryset = Tag.objects.all()\n    serializer_class = TagSerializer\n    permission_classes = [CommentOwnerOrReadOnly]\nclass PostUserLikesViewSet(ModelViewSet):\n    queryset = PostUserLikes.objects.all()\n    serializer_class = PostUserLikesSerializer\nclass PostViewSet(ModelViewSet):\n    queryset = Post.objects.all()\n    serializer_class = PostSerializer",
         "detail": "api.views",
         "documentation": {}
     },
@@ -572,7 +666,7 @@
         "kind": 5,
         "importPath": "final.settings",
         "description": "final.settings",
-        "peekOfCode": "TIME_ZONE = 'UTC'\nUSE_I18N = True\nUSE_TZ = True\n# Static files (CSS, JavaScript, Images)\n# https://docs.djangoproject.com/en/5.1/howto/static-files/\nSTATIC_URL = 'static/'\n# Default primary key field type\n# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field\nDEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'",
+        "peekOfCode": "TIME_ZONE = 'UTC'\nUSE_I18N = True\nUSE_TZ = True\n# Static files (CSS, JavaScript, Images)\n# https://docs.djangoproject.com/en/5.1/howto/static-files/\nSTATIC_URL = 'static/'\n# Default primary key field type\n# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field\nDEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'\nREST_FRAMEWORK = {",
         "detail": "final.settings",
         "documentation": {}
     },
@@ -581,7 +675,7 @@
         "kind": 5,
         "importPath": "final.settings",
         "description": "final.settings",
-        "peekOfCode": "USE_I18N = True\nUSE_TZ = True\n# Static files (CSS, JavaScript, Images)\n# https://docs.djangoproject.com/en/5.1/howto/static-files/\nSTATIC_URL = 'static/'\n# Default primary key field type\n# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field\nDEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'",
+        "peekOfCode": "USE_I18N = True\nUSE_TZ = True\n# Static files (CSS, JavaScript, Images)\n# https://docs.djangoproject.com/en/5.1/howto/static-files/\nSTATIC_URL = 'static/'\n# Default primary key field type\n# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field\nDEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'\nREST_FRAMEWORK = {\n    # permissions:",
         "detail": "final.settings",
         "documentation": {}
     },
@@ -590,7 +684,7 @@
         "kind": 5,
         "importPath": "final.settings",
         "description": "final.settings",
-        "peekOfCode": "USE_TZ = True\n# Static files (CSS, JavaScript, Images)\n# https://docs.djangoproject.com/en/5.1/howto/static-files/\nSTATIC_URL = 'static/'\n# Default primary key field type\n# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field\nDEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'",
+        "peekOfCode": "USE_TZ = True\n# Static files (CSS, JavaScript, Images)\n# https://docs.djangoproject.com/en/5.1/howto/static-files/\nSTATIC_URL = 'static/'\n# Default primary key field type\n# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field\nDEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'\nREST_FRAMEWORK = {\n    # permissions:\n    'DEFAULT_PERMISSION_CLASSES': [",
         "detail": "final.settings",
         "documentation": {}
     },
@@ -599,7 +693,7 @@
         "kind": 5,
         "importPath": "final.settings",
         "description": "final.settings",
-        "peekOfCode": "STATIC_URL = 'static/'\n# Default primary key field type\n# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field\nDEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'",
+        "peekOfCode": "STATIC_URL = 'static/'\n# Default primary key field type\n# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field\nDEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'\nREST_FRAMEWORK = {\n    # permissions:\n    'DEFAULT_PERMISSION_CLASSES': [\n        'rest_framework.permissions.IsAuthenticated',\n        # 'rest_framework.permissions.AllowAny',\n    ]",
         "detail": "final.settings",
         "documentation": {}
     },
@@ -608,7 +702,16 @@
         "kind": 5,
         "importPath": "final.settings",
         "description": "final.settings",
-        "peekOfCode": "DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'",
+        "peekOfCode": "DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'\nREST_FRAMEWORK = {\n    # permissions:\n    'DEFAULT_PERMISSION_CLASSES': [\n        'rest_framework.permissions.IsAuthenticated',\n        # 'rest_framework.permissions.AllowAny',\n    ]\n}",
+        "detail": "final.settings",
+        "documentation": {}
+    },
+    {
+        "label": "REST_FRAMEWORK",
+        "kind": 5,
+        "importPath": "final.settings",
+        "description": "final.settings",
+        "peekOfCode": "REST_FRAMEWORK = {\n    # permissions:\n    'DEFAULT_PERMISSION_CLASSES': [\n        'rest_framework.permissions.IsAuthenticated',\n        # 'rest_framework.permissions.AllowAny',\n    ]\n}",
         "detail": "final.settings",
         "documentation": {}
     },
@@ -617,7 +720,7 @@
         "kind": 5,
         "importPath": "final.urls",
         "description": "final.urls",
-        "peekOfCode": "urlpatterns = [\n    path('admin/', admin.site.urls),\n    path('api/',include('api.urls')),\n]\n# api/   we include all the api module endpoints",
+        "peekOfCode": "urlpatterns = [\n    path('admin/', admin.site.urls),\n    path('api/',include('api.urls')),\n    path('api-auth/', include('rest_framework.urls'))\n]\n# api/   we include all the api module endpoints",
         "detail": "final.urls",
         "documentation": {}
     },

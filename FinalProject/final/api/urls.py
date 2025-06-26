@@ -1,13 +1,16 @@
 from rest_framework.routers import DefaultRouter
 
 from .views import (CommentViewSet, PostViewSet, PostUserLikesViewSet,
-                    UserProfileViewSet, UserViewSet, TagViewSet
+                    UserProfileViewSet, UserViewSet, TagViewSet, AuthViewSet
                     )
 
 
 router = DefaultRouter()
 
+
 router.register('tags', TagViewSet, basename='tags')
+router.register('auth', AuthViewSet, basename='auth')
+
 router.register('comments', CommentViewSet, basename='comments')
 router.register('posts', PostViewSet, basename='posts')
 router.register('users', UserViewSet, basename='users')
